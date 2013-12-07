@@ -1,4 +1,4 @@
-package grafik;
+package Graphic;
 
 import javax.swing.*;
 

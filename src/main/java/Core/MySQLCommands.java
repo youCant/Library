@@ -1,4 +1,4 @@
-package main;
+package Core;
 
 import java.util.Scanner;
 
@@ -9,7 +9,9 @@ import java.util.Scanner;
  * Time: 19:53
  * To change this template use File | Settings | File Templates.
  */
-public class MySQLCommands extends MySQLHelper {
+public class MySQLCommands {
+
+    private MySQLHelper mySQLHelper = MySQLHelper.getInstance();
     private String s1,s2;
     private int i;
     private Scanner sc = new Scanner(System.in);
@@ -27,7 +29,7 @@ public class MySQLCommands extends MySQLHelper {
                 if(sc.hasNextInt()) { // возвращает истинну если с потока ввода можно считать целое число
                     s1 = sc.nextLine(); // считывает строку и сохраняем в переменную
                     i = Integer.parseInt(s1);
-                    history(i);
+                    mySQLHelper.history(i);
                 } else {
                     System.out.println("you write fractional number.");
                 }
@@ -38,7 +40,7 @@ public class MySQLCommands extends MySQLHelper {
                 String name = sc.nextLine();
                 System.out.print("Write book title: ");
                 String title = sc.nextLine();
-                addBook(name, title);
+                mySQLHelper.addBook(name, title);
             } else
             if (s1.equals("-takeb"))
             {
@@ -46,7 +48,7 @@ public class MySQLCommands extends MySQLHelper {
                 if(sc.hasNextInt()) { // возвращает истинну если с потока ввода можно считать целое число
                     s1 = sc.nextLine(); // считывает строку и сохраняем в переменную
                     i = Integer.parseInt(s1);
-                    takeBook(i);
+                    mySQLHelper.takeBook(i);
                 } else {
                     System.out.println("you write fractional number");
                 }
@@ -58,7 +60,7 @@ public class MySQLCommands extends MySQLHelper {
                if(sc.hasNextInt()) { // возвращает истинну если с потока ввода можно считать целое число
                     s1 = sc.nextLine(); // считывает строку и сохраняем в переменную
                     i = Integer.parseInt(s1);
-                    giveBook(i);
+                    mySQLHelper.giveBook(i);
                 } else {
                     System.out.println("you write fractional number");
                }
@@ -79,7 +81,7 @@ public class MySQLCommands extends MySQLHelper {
             } else
             if (s1.equals("-avbo"))
             {
-                bookAvNow();
+                mySQLHelper.bookAvNow();
             }
             else
             {
