@@ -1,4 +1,4 @@
-package main;
+package Core;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * Time: 22:44
  * To change this template use File | Settings | File Templates.
  */
-public class GraficUse extends JFrame implements ActionListener {
+public class GraphicUse extends JFrame implements ActionListener {
     private  JLabel label;
     private JLabel secLabel;
     private JTextField htextField;
@@ -28,13 +28,13 @@ public class GraficUse extends JFrame implements ActionListener {
     private JButton exitB;
     private String storeData = "";
     private Integer storeId;
-    private MySQLHelper helper;
+    private MySQLHelper helper = MySQLHelper.getInstance();
 
 
 
 
 
-    public GraficUse () {
+    public GraphicUse() {
         setTitle("Library");
         setLayout(null);
         setSize(700,300);
@@ -132,7 +132,7 @@ public class GraficUse extends JFrame implements ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
-        try {
+
         if (e.getSource() == hisB) {
             storeData = htextField.getText();
             storeId = Integer.parseInt(storeData);
@@ -156,9 +156,6 @@ public class GraficUse extends JFrame implements ActionListener {
         if (e.getSource() == exitB) {
             System.exit(0);
         }
-        } catch (Exception e1){
-            e1.printStackTrace();
-        };
 
 
 

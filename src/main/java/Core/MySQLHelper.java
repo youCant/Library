@@ -1,5 +1,6 @@
-package main;
+package Core;
 
+import java.io.IOException;
 import java.sql.*;
 
 /**
@@ -14,39 +15,45 @@ public class MySQLHelper {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
+    private static MySQLHelper mySQLHelperInstance;
 
-
+    public static MySQLHelper getInstance() {
+            if (mySQLHelperInstance == null){
+                mySQLHelperInstance = new MySQLHelper() ;
+            }
+        return mySQLHelperInstance;
+    }
     //initialisation without name
-    public MySQLHelper() throws Exception
-    {
+    private MySQLHelper() {
         // register jdbc driver
+        try{
         Class.forName("com.mysql.jdbc.Driver");
-        ConToDB();
+        ConnectionToDB();
         DropDB("library");
         CreateDB("Library");
         ConToDB("Library");
         CreateTable();
 
         Runtime.getRuntime().exec("cmd.exe cd C:\\Program Files\\coolMySQL\\MySQL Server 5.6\\bin\\ mysql -uroot -p4mjqi3h3cawE library < C:\\Users\\shade\\Desktop\\mysql\\de.vogella.mysql.first\\bd\\Res\\1.sql");
-
+        }catch (SQLException | ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
 
-    // connection to DB without name
-    public void ConToDB() throws Exception
+    public void ConnectionToDB() throws SQLException
     {
         try{
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=4mjqi3h3cawE");
+                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=impimp");
         }
         catch(SQLException se){
-            //Handle errors for JDBC
             se.printStackTrace();
         }
     }
 
-    public void ConToDB(String DBName) throws Exception
+    public void ConToDB(String DBName) throws SQLException
     {
         try{
             connect = DriverManager
@@ -71,7 +78,7 @@ public class MySQLHelper {
 
 
     // delete DB
-    public void DropDB(String DbName)throws Exception
+    public void DropDB(String DbName)throws SQLException
     {
         try{
             statement = connect.createStatement();
@@ -85,7 +92,7 @@ public class MySQLHelper {
 
 
     // create DB
-    public void CreateDB(String DbName) throws Exception
+    public void CreateDB(String DbName) throws SQLException
     {
         try{
             statement = connect.createStatement();
@@ -98,7 +105,7 @@ public class MySQLHelper {
 
 
     // create Table const
-    public void CreateTable() throws Exception
+    public void CreateTable() throws SQLException
     {
         try{
             statement = connect.createStatement();
@@ -124,7 +131,7 @@ public class MySQLHelper {
 
 
     // create Table var
-    public void CreateTable(String TBName) throws Exception
+    public void CreateTable(String TBName) throws SQLException
     {
         try{
             statement = connect.createStatement();
@@ -137,9 +144,7 @@ public class MySQLHelper {
 
 
     // update Table (give book)
-    public void giveBook(Integer BookId) throws Exception
-    {
-        ConToDB();
+    public void giveBook(Integer BookId)  {
         try {
             if (BookAv(BookId)) {
                 String sql = "UPDATE Library.books SET Aviable = 0 WHERE id = " + BookId;
@@ -159,8 +164,7 @@ public class MySQLHelper {
 
 
     // update Table (take book ID)
-    public void takeBook(Integer BookId) throws Exception
-    {
+    public void takeBook(Integer BookId)  {
         try {
             if (!BookAv(BookId)) {
                 String sql = "UPDATE Library.books SET Aviable = 1 WHERE id = " + BookId;
@@ -180,10 +184,9 @@ public class MySQLHelper {
 
 
     // book history
-    public void history(int BookId) throws Exception
-    {
-        ConToDB();
+    public void history(int BookId)  {
         try {
+
             statement = connect.createStatement();
             resultSet = statement
                     .executeQuery("select * from library.ychet where idYchet = " + BookId);
@@ -196,8 +199,7 @@ public class MySQLHelper {
     }
 
     //book Aviable count
-    public void bookAvNow() throws Exception
-    {
+    public void bookAvNow() throws SQLException  {
         try{
             statement = connect.createStatement();
             resultSet = statement
@@ -214,9 +216,7 @@ public class MySQLHelper {
     }
 
 
-    // add book
-    public void addBook(String AuthorName, String BookName) throws Exception
-    {
+    public void addBook(String AuthorName, String BookName)  {
         try{
             statement = connect.createStatement();
             String sql = "INSERT INTO library.books (AuthorName, BooksName, aviable) VALUES (\"" + AuthorName + "\", \"" + BookName + "\", 1)";
@@ -229,7 +229,7 @@ public class MySQLHelper {
     }
 
     // Book Aviable
-    public boolean BookAv(int BookId) throws Exception {
+    public boolean BookAv(int BookId)  {
         boolean t = false;
         try {
             statement = connect.createStatement();
