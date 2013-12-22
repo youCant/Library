@@ -10,19 +10,24 @@ import java.awt.event.AdjustmentListener;
 /**
  * Created by shade on 22.12.13.
  */
-public class AddTable extends JPanel{
+public class TableLibraryBooks extends JPanel{
     private static final int N_ROWS = 10;
     public MySQLHelper helper = MySQLHelper.getInstance();
-    private BooksTableDataGenerator tableModel = new BooksTableDataGenerator(helper.getConnection(), "select * from books", "books");
-    private DefaultTableModel defaultTableModel = new DefaultTableModel(tableModel.getContent(), tableModel.getColumnNames());
-    private JTable table = new JTable(defaultTableModel);
-    private JScrollPane scrollPane = new JScrollPane(table);
-    private JScrollBar vScroll = scrollPane.getVerticalScrollBar();
+    private BooksTableDataGenerator tableModel;
+    private DefaultTableModel defaultTableModel;
+    private JTable table;
+    private JScrollPane scrollPane;
+    private JScrollBar vScroll;
     private Boolean isAutoScroll;
     private JTextField bookTitleTextField;
     private JTextField authorNameTextField;
 
-    public AddTable() {
+    public TableLibraryBooks() {
+        tableModel = new BooksTableDataGenerator(helper.getConnection(), "select * from books", "books");
+        defaultTableModel = new DefaultTableModel(tableModel.getContent(), tableModel.getColumnNames());
+        table = new JTable(defaultTableModel);
+        scrollPane = new JScrollPane(table);
+        vScroll = scrollPane.getVerticalScrollBar();
         this.setLayout(new BorderLayout());
         Dimension d = new Dimension(320, N_ROWS * table.getRowHeight());
         table.setPreferredScrollableViewportSize(d);
@@ -38,11 +43,13 @@ public class AddTable extends JPanel{
 
     this.add(scrollPane, BorderLayout.CENTER);
         JPanel panel = new JPanel();
-        JLabel label = new JLabel("Book Title: ");
+        JLabel bookTitleLabel = new JLabel("Book Title: ");
         bookTitleTextField = new JTextField();
         JLabel secLabel = new JLabel("Author Name : ");
         authorNameTextField = new JTextField();
-        panel.add(label);
+        bookTitleTextField.setPreferredSize(new Dimension(100, 25));
+        authorNameTextField.setPreferredSize(new Dimension(100, 25));
+        panel.add(bookTitleLabel);
         panel.add(bookTitleTextField);
         panel.add(secLabel);
         panel.add(authorNameTextField);

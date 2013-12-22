@@ -13,7 +13,7 @@ public class Main {
             public void run() {
                 JFrame f = new JFrame();
                 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                AddTable nlt = new AddTable();
+                TableLibraryBooks nlt = new TableLibraryBooks();
                 f.add(nlt);
                 f.pack();
                 f.setLocationRelativeTo(null);

@@ -11,7 +11,7 @@ import java.sql.*;
  * To change this template use File | Settings | File Templates.
  */
 public class MySQLHelper {
-    public static final String MYSQL_PASSWORD = "root";
+    public static final String MYSQL_PASSWORD = "4mjqi3h3cawE";
     private Connection connect = null;
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
