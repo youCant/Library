@@ -1,6 +1,7 @@
 package Core;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
@@ -11,10 +12,10 @@ import java.awt.event.AdjustmentListener;
  */
 public class AddTable extends JPanel{
     private static final int N_ROWS = 10;
-    private GraphicUse graphicUse = new GraphicUse();
     public MySQLHelper helper = MySQLHelper.getInstance();
-    private DBTableModel tableModel = new DBTableModel(helper.getConnection(), "select * from books", "books");
-    private JTable table = new JTable(tableModel.getContent(), tableModel.getColumnNames());
+    private BooksTableDataGenerator tableModel = new BooksTableDataGenerator(helper.getConnection(), "select * from books", "books");
+    private DefaultTableModel defaultTableModel = new DefaultTableModel(tableModel.getContent(), tableModel.getColumnNames());
+    private JTable table = new JTable(defaultTableModel);
     private JScrollPane scrollPane = new JScrollPane(table);
     private JScrollBar vScroll = scrollPane.getVerticalScrollBar();
     private Boolean isAutoScroll;
@@ -34,6 +35,7 @@ public class AddTable extends JPanel{
             isAutoScroll = !e.getValueIsAdjusting();
         }
     });
+
     this.add(scrollPane, BorderLayout.CENTER);
         JPanel panel = new JPanel();
         JLabel label = new JLabel("Book Title: ");
@@ -56,17 +58,12 @@ public class AddTable extends JPanel{
     }
 
     private void addRow() {
-        helper.addBook(bookTitleTextField.getText(), authorNameTextField.getText());
-        int i = 1;
-        tableModel.addRow(new Object[]{
-                tableModel.getRowCount(),
-                authorNameTextField.getText(),
-                bookTitleTextField.getText(),
-                i
-
-        });
+       helper.addBook(bookTitleTextField.getText(), authorNameTextField.getText());
+        if (helper.isDataBaseWasChanged) {
+        defaultTableModel.addRow(tableModel.getLastContent(helper.getConnection(), "SELECT * FROM books ORDER BY id DESC LIMIT 1"));
         bookTitleTextField.setText("");
         authorNameTextField.setText("");
+        }
     }
     }
 

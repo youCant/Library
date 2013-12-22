@@ -4,19 +4,62 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class DBTableModel extends DefaultTableModel {
+public class BooksTableDataGenerator {
 
     private Object[][] content;     //хранит данные
+    private Object [] lastContent;  //хранит последнюю строчку
     private String[] columnNames;   //хранит названия заголовков
     private Class[] columnClasses;  //хранит типы полей (столбцов)
 
-    public DBTableModel(Connection con, String query, String tableName)  {
+    public BooksTableDataGenerator(Connection con, String query, String tableName)  {
         super();
         try{
             getTableContent(con, query, tableName);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Object[] getLastContent(Connection conn, String query) {
+        try{
+        Statement st = conn.createStatement();
+        ResultSet rs = null;
+        rs = st.executeQuery(query);
+            ArrayList rowList = new ArrayList();
+            while (rs.next()) {
+            ArrayList cellList = new ArrayList();
+
+            for (int i = 0; i < columnClasses.length; i++) {
+                Object cellValue = null;
+                if (columnClasses[i] == String.class) {
+                    cellValue = rs.getString(columnNames[i]);
+                }
+                else if (columnClasses[i] == Integer.class) {
+                    cellValue = new Integer(rs.getInt(columnNames[i]));
+                }
+                else if (columnClasses[i] == Float.class) {
+                    cellValue = new Float(rs.getInt(columnNames[i]));
+                }
+                else if (columnClasses[i] == Double.class) {
+                    cellValue = new Double(rs.getDouble(columnNames[i]));
+                }
+                else if (columnClasses[i] == java.sql.Date.class) {
+                    cellValue = rs.getDate(columnNames[i]);
+                }
+                else {
+                    System.out.println("Can't define column type " + columnNames[i]);
+                }
+                cellList.add(cellValue);
+            }
+                Object[] cells = cellList.toArray();
+                rowList.add(cells);
+            }
+
+            lastContent = (Object[]) rowList.get(0);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return lastContent;
     }
 
     private void getTableContent(Connection conn, String query, String tableName) throws SQLException {

@@ -9,14 +9,14 @@ import java.util.Scanner;
  * Time: 19:53
  * To change this template use File | Settings | File Templates.
  */
-public class MySQLCommands {
+public class MySQLCmdCommands {
 
     private MySQLHelper mySQLHelper = MySQLHelper.getInstance();
     private String s1,s2;
     private int i;
     private Scanner sc = new Scanner(System.in);
 
-    public MySQLCommands() throws Exception {
+    public MySQLCmdCommands() throws Exception {
         System.out.println("Aviable list commands \"-sp\"");
         boolean t = true;
         while(t)

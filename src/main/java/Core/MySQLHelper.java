@@ -11,11 +11,13 @@ import java.sql.*;
  * To change this template use File | Settings | File Templates.
  */
 public class MySQLHelper {
+    public static final String MYSQL_PASSWORD = "root";
     private Connection connect = null;
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
     private static MySQLHelper mySQLHelperInstance;
+    public boolean isDataBaseWasChanged;
 
     public static MySQLHelper getInstance() {
             if (mySQLHelperInstance == null){
@@ -34,7 +36,7 @@ public class MySQLHelper {
         ConeectionToDB("Library");
 //        CreateTable();
 
-        Runtime.getRuntime().exec("cmd.exe cd C:\\Program Files\\coolMySQL\\MySQL Server 5.6\\bin\\ mysql -uroot -p4mjqi3h3cawE library < C:\\Users\\shade\\Desktop\\mysql\\de.vogella.mysql.first\\bd\\Res\\1.sql");
+        Runtime.getRuntime().exec("cmd.exe cd C:\\Program Files\\coolMySQL\\MySQL Server 5.6\\bin\\ mysql -uroot -p" + MYSQL_PASSWORD + " library < C:\\Users\\shade\\Desktop\\mysql\\de.vogella.mysql.first\\bd\\Res\\1.sql");
         }catch (SQLException | ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -46,7 +48,7 @@ public class MySQLHelper {
     {
         try{
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=4mjqi3h3cawE");
+                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=" + MYSQL_PASSWORD);
         }
         catch(SQLException se){
             se.printStackTrace();
@@ -57,7 +59,7 @@ public class MySQLHelper {
     {
         try{
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/" + DBName + "?" + "user=root&password=4mjqi3h3cawE");
+                    .getConnection("jdbc:mysql://localhost/" + DBName + "?" + "user=root&password=" + MYSQL_PASSWORD);
         }
         catch(SQLException se){
             //Handle errors for JDBC
@@ -207,9 +209,13 @@ public class MySQLHelper {
     public void addBook(String AuthorName, String BookName)  {
         try{
             statement = connect.createStatement();
-            if ((AuthorName.equals("")) || (BookName.equals("")))
+            if ((AuthorName.equals("")) || (BookName.equals(""))) {
+
+                    isDataBaseWasChanged = false;
                     System.out.println("not enough information");
+            }
             else {
+                isDataBaseWasChanged = true;
             String sql = "INSERT INTO library.books (AuthorName, BooksName, aviable) VALUES (\"" + AuthorName + "\", \"" + BookName + "\", 1)";
             statement.executeUpdate(sql);
             System.out.println("Book added"); }
