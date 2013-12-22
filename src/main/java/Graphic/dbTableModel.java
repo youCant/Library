@@ -1,5 +1,8 @@
 package Graphic;
 
+import Core.MySQLHelper;
+
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,13 +12,20 @@ public class dbTableModel extends AbstractTableModel {
     private Object[][] content;     //хранит данные
     private String[] columnNames;   //хранит названия заголовков
     private Class[] columnClasses;  //хранит типы полей (столбцов)
+    private MySQLHelper helper = MySQLHelper.getInstance();
 
-    public dbTableModel(Connection con, String query, String tableName) throws SQLException {
+    public dbTableModel()  {
         //super();
-        getTableContent(con, query, tableName);
+        try{
+            getTableContent(helper.getConnection(), "select * from books", "books");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void getTableContent(Connection conn, String query, String tableName) throws SQLException {
+    private ArrayList getTableContent(Connection conn, String query, String tableName) throws SQLException {
+        ArrayList rowList = null;
+        try {
         DatabaseMetaData md = conn.getMetaData();
         ResultSet rs = md.getColumns(null, null, tableName, null);
 
@@ -40,7 +50,7 @@ public class dbTableModel extends AbstractTableModel {
                 case Types.DATE:
                 case Types.TIME:
                 case Types.TIMESTAMP:
-                    colTypesList.add(java.sql.Date.class);
+                    colTypesList.add(Date.class);
                     break;
                 default:
                     colTypesList.add(String.class);
@@ -57,7 +67,7 @@ public class dbTableModel extends AbstractTableModel {
         Statement st = conn.createStatement();
         rs = st.executeQuery(query);
 
-        ArrayList rowList = new ArrayList();
+            rowList = new ArrayList();
 
         while (rs.next()) {
             ArrayList cellList = new ArrayList();
@@ -75,7 +85,7 @@ public class dbTableModel extends AbstractTableModel {
                 else if (columnClasses[i] == Double.class) {
                     cellValue = new Double(rs.getDouble(columnNames[i]));
                 }
-                else if (columnClasses[i] == java.sql.Date.class) {
+                else if (columnClasses[i] == Date.class) {
                     cellValue = rs.getDate(columnNames[i]);
                 }
                 else {
@@ -87,12 +97,26 @@ public class dbTableModel extends AbstractTableModel {
             Object[] cells = cellList.toArray();
             rowList.add(cells);
         }// while
+        createTable(rowList);
+        rs.close();
+        st.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+
+        }
+        return rowList;
+    }
+
+    private void createTable(ArrayList rowList) {
         content = new Object[rowList.size()][];
         for (int i = 0; i < content.length; i++) {
             content[i] = (Object[]) rowList.get(i);
         }
-        rs.close();
-        st.close();
+        JTable table = new JTable(content, columnNames);
+        JFrame f = new JFrame();
+        f.setSize(300, 300);
+        f.add(new JScrollPane(table));
+        f.setVisible(true);
     }
 
     @Override
@@ -110,9 +134,10 @@ public class dbTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int row, int col) {
+     public Object getValueAt(int row, int col) {
         return content[row][col];
     }
+
 
     @Override
     public Class getColumnClass(int col) {
@@ -123,6 +148,7 @@ public class dbTableModel extends AbstractTableModel {
     public String getColumnName(int col) {
         return columnNames[col];
     }
+
 
     @Override
     public boolean isCellEditable(int rowIndex, int colIndex) {

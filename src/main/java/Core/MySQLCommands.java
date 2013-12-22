@@ -29,7 +29,7 @@ public class MySQLCommands {
                 if(sc.hasNextInt()) { // возвращает истинну если с потока ввода можно считать целое число
                     s1 = sc.nextLine(); // считывает строку и сохраняем в переменную
                     i = Integer.parseInt(s1);
-                    mySQLHelper.history(i);
+                    mySQLHelper.bookHistory(i);
                 } else {
                     System.out.println("you write fractional number.");
                 }
@@ -72,7 +72,7 @@ public class MySQLCommands {
             if (s1.equals("-sp"))
             {
                 System.out.println("-sp Aviable list commands; \n" +
-                        "-his Book history; \n" +
+                        "-his Book bookHistory; \n" +
                         "-takeb pass book; \n" +
                         "-giveb give book; \n" +
                         "-addb add Book to table; \n" +
@@ -81,7 +81,7 @@ public class MySQLCommands {
             } else
             if (s1.equals("-avbo"))
             {
-                mySQLHelper.bookAvNow();
+                mySQLHelper.bookAviableNow();
             }
             else
             {

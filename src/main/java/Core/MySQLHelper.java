@@ -28,11 +28,11 @@ public class MySQLHelper {
         // register jdbc driver
         try{
         Class.forName("com.mysql.jdbc.Driver");
-        ConnectionToDB();
+        /*ConnectionToDB();
         DropDB("library");
-        CreateDB("Library");
-        ConToDB("Library");
-        CreateTable();
+        CreateDB("Library");*/
+        ConeectionToDB("Library");
+//        CreateTable();
 
         Runtime.getRuntime().exec("cmd.exe cd C:\\Program Files\\coolMySQL\\MySQL Server 5.6\\bin\\ mysql -uroot -p4mjqi3h3cawE library < C:\\Users\\shade\\Desktop\\mysql\\de.vogella.mysql.first\\bd\\Res\\1.sql");
         }catch (SQLException | ClassNotFoundException | IOException e) {
@@ -46,14 +46,14 @@ public class MySQLHelper {
     {
         try{
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=impimp");
+                    .getConnection("jdbc:mysql://localhost/?" + "user=root&password=4mjqi3h3cawE");
         }
         catch(SQLException se){
             se.printStackTrace();
         }
     }
 
-    public void ConToDB(String DBName) throws SQLException
+    public void ConeectionToDB(String DBName) throws SQLException
     {
         try{
             connect = DriverManager
@@ -67,7 +67,7 @@ public class MySQLHelper {
 
 
     // close connection
-    public void CloseCon() {
+    public void CloseConnection() {
         try{
             if(statement!=null)
                 connect.close();
@@ -130,23 +130,11 @@ public class MySQLHelper {
     }
 
 
-    // create Table var
-    public void CreateTable(String TBName) throws SQLException
-    {
-        try{
-            statement = connect.createStatement();
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }
-    }
-// Insert Value in table
-
 
     // update Table (give book)
     public void giveBook(Integer BookId)  {
         try {
-            if (BookAv(BookId)) {
+            if (bookAviable(BookId)) {
                 String sql = "UPDATE Library.books SET Aviable = 0 WHERE id = " + BookId;
                 statement.executeUpdate(sql);
                 sql =  "INSERT INTO Library.ychet (idYchet,info,data) VALUES (" + BookId + " , \"pick\", \"" + java.util.Calendar.getInstance().getTime() + "\")";
@@ -166,7 +154,7 @@ public class MySQLHelper {
     // update Table (take book ID)
     public void takeBook(Integer BookId)  {
         try {
-            if (!BookAv(BookId)) {
+            if (!bookAviable(BookId)) {
                 String sql = "UPDATE Library.books SET Aviable = 1 WHERE id = " + BookId;
                 statement.executeUpdate(sql);
                 sql =  "INSERT INTO Library.ychet (idYchet,info,data) VALUES (" + BookId + " , \"vozvrat\", \"" + java.util.Calendar.getInstance().getTime() + "\")";
@@ -183,8 +171,8 @@ public class MySQLHelper {
     }
 
 
-    // book history
-    public void history(int BookId)  {
+    // book bookHistory
+    public void bookHistory(int BookId)  {
         try {
 
             statement = connect.createStatement();
@@ -199,7 +187,7 @@ public class MySQLHelper {
     }
 
     //book Aviable count
-    public void bookAvNow() throws SQLException  {
+    public void bookAviableNow() throws SQLException  {
         try{
             statement = connect.createStatement();
             resultSet = statement
@@ -219,17 +207,20 @@ public class MySQLHelper {
     public void addBook(String AuthorName, String BookName)  {
         try{
             statement = connect.createStatement();
+            if ((AuthorName.equals("")) || (BookName.equals("")))
+                    System.out.println("not enough information");
+            else {
             String sql = "INSERT INTO library.books (AuthorName, BooksName, aviable) VALUES (\"" + AuthorName + "\", \"" + BookName + "\", 1)";
             statement.executeUpdate(sql);
-            System.out.println("Book added");
+            System.out.println("Book added"); }
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
         }
     }
 
-    // Book Aviable
-    public boolean BookAv(int BookId)  {
+    // Доступна ли книга
+    public boolean bookAviable(int BookId)  {
         boolean t = false;
         try {
             statement = connect.createStatement();
@@ -242,5 +233,9 @@ public class MySQLHelper {
             se.printStackTrace();
         }
         return t;
+    }
+
+    public Connection getConnection() {
+        return connect;
     }
 }

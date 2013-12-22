@@ -9,8 +9,9 @@ public class HelloWorldFrame extends JFrame {
 
 
     public static void main(String args[]) {
-        second s = new second();
-        second s2 = new second();
+        dbTableModel tableModel = new dbTableModel();
+        /*second s = new second();
+        second s2 = new second();*/
 
     }
 
